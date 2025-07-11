@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ShoppingCart, X, Plus, Minus, Trash2 } from 'lucide-react';
 import { CartItem } from '../types/product';
+import CheckoutModal from './CheckoutModal';
 
 interface CartSummaryProps {
   itemCount: number;
@@ -20,6 +21,7 @@ const CartSummary = ({
   totalPrice 
 }: CartSummaryProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [showCheckout, setShowCheckout] = useState(false);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -125,7 +127,10 @@ const CartSummary = ({
                 >
                   Clear Cart
                 </button>
-                <button className="flex-1 px-3 py-2 text-sm bg-gradient-primary text-white rounded-lg hover:opacity-90 transition-opacity">
+                <button 
+                  onClick={() => setShowCheckout(true)}
+                  className="flex-1 px-3 py-2 text-sm bg-gradient-primary text-white rounded-lg hover:opacity-90 transition-opacity"
+                >
                   Checkout
                 </button>
               </div>
@@ -133,6 +138,14 @@ const CartSummary = ({
           )}
         </div>
       )}
+
+      <CheckoutModal
+        isOpen={showCheckout}
+        onClose={() => setShowCheckout(false)}
+        cart={cart}
+        totalPrice={totalPrice}
+        onClearCart={onClearCart}
+      />
     </div>
   );
 };
