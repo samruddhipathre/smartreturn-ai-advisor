@@ -16,6 +16,7 @@ const CheckoutModal = ({ isOpen, onClose, cart, totalPrice, onClearCart }: Check
   const [friendEmail, setFriendEmail] = useState('');
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
+  const [splitPercentage, setSplitPercentage] = useState(50); // Your percentage (0-100)
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
 
@@ -71,7 +72,9 @@ const CheckoutModal = ({ isOpen, onClose, cart, totalPrice, onClearCart }: Check
     }
   };
 
-  const splitAmount = checkoutType === 'friend' ? totalPrice / 2 : totalPrice;
+  // Calculate split amounts based on percentage
+  const yourAmount = checkoutType === 'friend' ? (totalPrice * splitPercentage) / 100 : totalPrice;
+  const friendAmount = checkoutType === 'friend' ? totalPrice - yourAmount : 0;
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -117,7 +120,7 @@ const CheckoutModal = ({ isOpen, onClose, cart, totalPrice, onClearCart }: Check
               >
                 <Users className="w-5 h-5" />
                 <span className="text-sm font-medium">Buy with Friend</span>
-                <span className="text-xs opacity-70">${splitAmount.toFixed(2)} each</span>
+                <span className="text-xs opacity-70">Split payment</span>
               </button>
             </div>
           </div>
@@ -158,6 +161,52 @@ const CheckoutModal = ({ isOpen, onClose, cart, totalPrice, onClearCart }: Check
             </div>
           </div>
 
+          {/* Split Payment Controls */}
+          {checkoutType === 'friend' && (
+            <div className="space-y-4">
+              <h3 className="font-medium text-foreground">Payment Split</h3>
+              
+              {/* Split Slider */}
+              <div className="space-y-3">
+                <div className="flex justify-between text-sm text-foreground">
+                  <span>You pay: {splitPercentage}%</span>
+                  <span>Friend pays: {100 - splitPercentage}%</span>
+                </div>
+                
+                <div className="relative">
+                  <input
+                    type="range"
+                    min="10"
+                    max="90"
+                    value={splitPercentage}
+                    onChange={(e) => setSplitPercentage(Number(e.target.value))}
+                    className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer"
+                    style={{
+                      background: `linear-gradient(to right, hsl(var(--primary)) 0%, hsl(var(--primary)) ${splitPercentage}%, hsl(var(--muted)) ${splitPercentage}%, hsl(var(--muted)) 100%)`
+                    }}
+                    disabled={isProcessing}
+                  />
+                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                    <span>10%</span>
+                    <span>50%</span>
+                    <span>90%</span>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div className="bg-primary/10 p-3 rounded-lg text-center">
+                    <div className="font-medium text-foreground">You</div>
+                    <div className="text-primary font-bold">${yourAmount.toFixed(2)}</div>
+                  </div>
+                  <div className="bg-muted/50 p-3 rounded-lg text-center">
+                    <div className="font-medium text-foreground">Friend</div>
+                    <div className="text-foreground font-bold">${friendAmount.toFixed(2)}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Friend Information */}
           {checkoutType === 'friend' && (
             <div className="space-y-4">
@@ -176,7 +225,7 @@ const CheckoutModal = ({ isOpen, onClose, cart, totalPrice, onClearCart }: Check
                   disabled={isProcessing}
                 />
                 <p className="text-xs text-muted-foreground mt-1">
-                  We'll send them a payment link for their share (${splitAmount.toFixed(2)})
+                  We'll send them a payment link for their share (${friendAmount.toFixed(2)})
                 </p>
               </div>
             </div>
@@ -202,12 +251,12 @@ const CheckoutModal = ({ isOpen, onClose, cart, totalPrice, onClearCart }: Check
                 <span className="text-foreground">
                   {checkoutType === 'friend' ? 'Your Share:' : 'Total:'}
                 </span>
-                <span className="text-primary">${splitAmount.toFixed(2)}</span>
+                <span className="text-primary">${yourAmount.toFixed(2)}</span>
               </div>
               {checkoutType === 'friend' && (
                 <div className="flex justify-between text-sm text-muted-foreground">
                   <span>Friend's Share:</span>
-                  <span>${splitAmount.toFixed(2)}</span>
+                  <span>${friendAmount.toFixed(2)}</span>
                 </div>
               )}
             </div>
