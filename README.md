@@ -52,12 +52,6 @@ This project focuses on addressing this challenge by:
     - Alternative products with better satisfaction metrics are suggested
 4. The user can choose a substitute or proceed with their original selection.
 
----
 
-## Getting Started
 
-Clone the repository:
 
-```bash
-git clone https://github.com/yourusername/return-risk-predictor.git
-cd return-risk-predictor
