@@ -161,16 +161,30 @@ const CheckoutModal = ({ isOpen, onClose, cart, totalPrice, onClearCart }: Check
             </div>
           </div>
 
-          {/* Split Payment Controls */}
+          {/* Bill Splitting Section */}
           {checkoutType === 'friend' && (
-            <div className="space-y-4">
-              <h3 className="font-medium text-foreground">Payment Split</h3>
+            <div className="border border-primary/20 rounded-lg p-4 bg-primary/5 space-y-4">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+                  <Users className="w-4 h-4 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">Split the Bill</h3>
+                  <p className="text-xs text-muted-foreground">Customize how much each person pays</p>
+                </div>
+              </div>
               
-              {/* Split Slider */}
-              <div className="space-y-3">
-                <div className="flex justify-between text-sm text-foreground">
-                  <span>You pay: {splitPercentage}%</span>
-                  <span>Friend pays: {100 - splitPercentage}%</span>
+              {/* Split Controls */}
+              <div className="space-y-4">
+                <div className="text-center">
+                  <div className="text-sm font-medium text-foreground mb-2">
+                    Drag to adjust split
+                  </div>
+                  <div className="flex justify-between text-xs text-muted-foreground mb-3">
+                    <span>You pay more</span>
+                    <span>Equal split</span>
+                    <span>Friend pays more</span>
+                  </div>
                 </div>
                 
                 <div className="relative">
@@ -180,27 +194,34 @@ const CheckoutModal = ({ isOpen, onClose, cart, totalPrice, onClearCart }: Check
                     max="90"
                     value={splitPercentage}
                     onChange={(e) => setSplitPercentage(Number(e.target.value))}
-                    className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer"
+                    className="w-full h-3 bg-muted rounded-lg appearance-none cursor-pointer slider"
                     style={{
                       background: `linear-gradient(to right, hsl(var(--primary)) 0%, hsl(var(--primary)) ${splitPercentage}%, hsl(var(--muted)) ${splitPercentage}%, hsl(var(--muted)) 100%)`
                     }}
                     disabled={isProcessing}
                   />
-                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                  <div className="flex justify-between text-xs text-muted-foreground mt-2">
                     <span>10%</span>
-                    <span>50%</span>
+                    <span className="font-medium">50%</span>
                     <span>90%</span>
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-2 gap-3 text-sm">
-                  <div className="bg-primary/10 p-3 rounded-lg text-center">
-                    <div className="font-medium text-foreground">You</div>
-                    <div className="text-primary font-bold">${yourAmount.toFixed(2)}</div>
+                {/* Split Results */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-gradient-to-br from-primary/20 to-primary/10 p-4 rounded-lg border border-primary/20">
+                    <div className="text-center">
+                      <div className="text-xs font-medium text-primary mb-1">YOU PAY</div>
+                      <div className="text-lg font-bold text-primary">${yourAmount.toFixed(2)}</div>
+                      <div className="text-xs text-muted-foreground">{splitPercentage}% of total</div>
+                    </div>
                   </div>
-                  <div className="bg-muted/50 p-3 rounded-lg text-center">
-                    <div className="font-medium text-foreground">Friend</div>
-                    <div className="text-foreground font-bold">${friendAmount.toFixed(2)}</div>
+                  <div className="bg-muted/30 p-4 rounded-lg border border-muted/50">
+                    <div className="text-center">
+                      <div className="text-xs font-medium text-foreground mb-1">FRIEND PAYS</div>
+                      <div className="text-lg font-bold text-foreground">${friendAmount.toFixed(2)}</div>
+                      <div className="text-xs text-muted-foreground">{100 - splitPercentage}% of total</div>
+                    </div>
                   </div>
                 </div>
               </div>
